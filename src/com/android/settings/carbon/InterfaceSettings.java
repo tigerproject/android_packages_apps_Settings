@@ -119,6 +119,7 @@ public class InterfaceSettings extends SettingsPreferenceFragment
     private static final String KEY_HALO_HIDE = "halo_hide";
     private static final String KEY_HALO_REVERSED = "halo_reversed";
     private static final String KEY_HALO_PAUSE = "halo_pause";
+    private static final String KEY_HALO_STYLE = "halo_style";
 
     Preference mCustomLabel;
     Preference mRamBar;
@@ -138,6 +139,7 @@ public class InterfaceSettings extends SettingsPreferenceFragment
     ListPreference mCustomBackground;
     ListPreference mClearPosition;
     private ListPreference mHaloState;
+    private ListPreference mHaloStyle;
     private CheckBoxPreference mHaloEnabled;
     private CheckBoxPreference mHaloHide;
     private CheckBoxPreference mHaloReversed;
@@ -235,6 +237,9 @@ public class InterfaceSettings extends SettingsPreferenceFragment
         mHaloPause = (CheckBoxPreference) prefSet.findPreference(KEY_HALO_PAUSE);
         mHaloPause.setChecked(Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.HALO_PAUSE, isLowRAM) == 1);
+
+        mHaloStyle = (ListPreference) findPreference(KEY_HALO_STYLE);
+        mHaloStyle.setOnPreferenceChangeListener(this);
 
         mHideExtras = (CheckBoxPreference) findPreference(PREF_HIDE_EXTRAS);
         mHideExtras.setChecked(Settings.System.getBoolean(cr,
@@ -564,6 +569,12 @@ public class InterfaceSettings extends SettingsPreferenceFragment
             Settings.System.putInt(getActivity().getContentResolver(),
                     Settings.System.CLEAR_RECENTS_POSITION, side);
             mClearPosition.setSummary(mClearPosition.getEntries()[index]);
+            return true;
+        } else if (preference == mHaloStyle) {
+            int color = Integer.valueOf((String) newValue);
+            Settings.System.putInt(getActivity().getContentResolver(),
+                    Settings.System.HALO_STYLE, color);
+            Helpers.restartSystemUI();
             return true;
         }
         return false;
